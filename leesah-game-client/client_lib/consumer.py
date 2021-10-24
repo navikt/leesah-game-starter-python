@@ -1,6 +1,6 @@
-from collections import Iterator
 from kafka import KafkaConsumer
-from config import (
+
+from .config import (
     CONSUMER_GROUP_ID,
     QUIZ_TOPIC,
     HOSTED_KAFKA,
@@ -9,7 +9,7 @@ from config import (
 
 
 class Consumer:
-    def __init__(self, local_kafka=True) -> None:
+    def __init__(self, auto_commit: bool, local_kafka=True) -> None:
         self.topic = QUIZ_TOPIC
         if local_kafka:
             self.consumer = KafkaConsumer(
@@ -24,12 +24,11 @@ class Consumer:
                 auto_offset_reset="earliest",
                 security_protocol="SSL",
                 ssl_check_hostname=True,
-                ssl_cafile="certs/integration-test-cluster-CA.pem",
+                ssl_cafile="certs/ca.pem",
                 ssl_certfile="certs/service.cert",
                 ssl_keyfile="certs/service.key",
+                enable_auto_commit=auto_commit
             )
         self.consumer.subscribe(QUIZ_TOPIC)
 
-    def consume(self) -> Iterator:
-        # TODO: use this function as a deserializing middleware
-        return self.consumer
+
