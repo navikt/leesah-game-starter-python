@@ -32,13 +32,10 @@
 ### 1.Setup virtual environment for the project
 
 **Download repository**
-Click `Code` on top of this page
-
+```Click `Code` on top of this page
 Click `Download ZIP`
-
 Unpack ZIP
-
-Move files to `certs`-folder
+Move files to `certs`-folder```
 
 
 We recommend to use a virtual environment to install the dependencies. Set one up using
