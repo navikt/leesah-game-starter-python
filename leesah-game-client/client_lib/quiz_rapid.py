@@ -33,6 +33,7 @@ class AssessmentStatus(enum.Enum):
     SUCCESS = "SUCCESS"
     FAILURE = "FAILURE"
 
+
 @dataclass
 class Assessment:
     messageId: str
@@ -72,15 +73,43 @@ class QuizParticipant(ABC):
 
 
 class QuizRapid:
+    """Mediates messages to and from the quiz rapid on behalf of the quiz participant"""
 
     def __init__(self,
                  team_name: str,
                  topic: str,
+                 bootstrap_servers: str,
+                 consumer_group_id: str,
                  auto_commit: bool = True,
-                 producer=Producer(local_kafka=False),
+                 producer=None,
                  consumer=None):
+        """
+        Constructs all the necessary attributes for the QuizRapid object.
+
+        Parameters
+        ----------
+            team_name : str
+                team name to filter messages on
+            topic : str
+                topic to produce and consume messages
+            bootstrap_servers : str
+                kafka host server
+            consumer_group_id : str
+                the kafka consumer group id to commit offset on
+            auto_commit : bool, optional
+                auto commit offset for the consumer (default is True)
+            producer : Producer, optional
+                specify a custom Producer to use (Default None)
+            consumer : Consumer, optional
+                specify a custom consumer to use (Default None)
+        """
         if consumer is None:
-            consumer = Consumer(auto_commit=auto_commit, local_kafka=False)
+            consumer = Consumer(topic,
+                                auto_commit,
+                                consumer_group_id,
+                                bootstrap_servers)
+        if producer is None:
+            producer = Producer(topic, bootstrap_servers)
         self._name = team_name
         self._producer = producer
         self._consumer = consumer
@@ -93,15 +122,20 @@ class QuizRapid:
             for msg in msgs:
                 msg = deserialize(msg.value)
                 if SchemaQuestion.is_valid(msg):
-                    participant.handle_question(Question(msg["messageId"], msg["question"], msg["category"], msg["type"]))
+                    participant.handle_question(
+                        Question(msg["messageId"], msg["question"], msg["category"], msg["type"]))
                 if SchemaAssessment.is_valid(msg) and msg["teamName"] == self._name:
-                    participant.handle_assessment(Assessment(msg["messageId"], msg["category"], msg["teamName"], msg["questionId"], msg["answerId"], AssessmentStatus[msg["status"].upper()], msg["sign"], msg["type"]))
+                    participant.handle_assessment(
+                        Assessment(msg["messageId"], msg["category"], msg["teamName"], msg["questionId"],
+                                   msg["answerId"], AssessmentStatus[msg["status"].upper()], msg["sign"], msg["type"]))
         for message in participant.messages():
             self._producer.send(dataclasses.asdict(message), self._topic)
 
         if self._commit_offset:
-            self._consumer.consumer.commit()
+            self.commit_offset()
 
+    def commit_offset(self):
+        self._consumer.consumer.commit()
 
 
 deserialize = lambda value: json.loads(value.decode(config.ENCODING))

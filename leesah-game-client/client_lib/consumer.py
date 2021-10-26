@@ -1,34 +1,31 @@
 from kafka import KafkaConsumer
 
 from .config import (
-    CONSUMER_GROUP_ID,
-    QUIZ_TOPIC,
-    HOSTED_KAFKA,
-    LOCAL_KAFKA,
+    CA_PATH, CERT_PATH, KEY_PATH,
 )
 
 
 class Consumer:
-    def __init__(self, auto_commit: bool, local_kafka=True) -> None:
-        self.topic = QUIZ_TOPIC
-        if local_kafka:
+    def __init__(self, topic: str, auto_commit: bool, consumer_group_id: str, bootstrap_servers: str) -> None:
+        self.topic = topic
+        if "localhost" in bootstrap_servers:
             self.consumer = KafkaConsumer(
-                bootstrap_servers=LOCAL_KAFKA,
-                group_id=CONSUMER_GROUP_ID,
+                bootstrap_servers=bootstrap_servers,
+                group_id=consumer_group_id,
                 auto_offset_reset="earliest",
             )
         else:
             self.consumer = KafkaConsumer(
-                bootstrap_servers=HOSTED_KAFKA,
-                group_id=CONSUMER_GROUP_ID,
+                bootstrap_servers=bootstrap_servers,
+                group_id=consumer_group_id,
                 auto_offset_reset="earliest",
                 security_protocol="SSL",
                 ssl_check_hostname=True,
-                ssl_cafile="certs/ca.pem",
-                ssl_certfile="certs/service.cert",
-                ssl_keyfile="certs/service.key",
+                ssl_cafile=CA_PATH,
+                ssl_certfile=CERT_PATH,
+                ssl_keyfile=KEY_PATH,
                 enable_auto_commit=auto_commit
             )
-        self.consumer.subscribe(QUIZ_TOPIC)
+        self.consumer.subscribe([topic])
 
 
