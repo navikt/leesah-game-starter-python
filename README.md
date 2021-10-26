@@ -72,7 +72,7 @@ published by the quizmaster 🧙. You are free to develop your application as yo
 som useful boilerplate so you can focus on the fun part, answering questions! 🎉
 
 The code you need to extend is all located in `./lessah-game-client/main.py` when you run `python3 leesah-game-client` 
-the `main()` function in `./lessah-game-client/main.py` is ran.
+the `main()` function in `./lessah-game-client/main.py` is executed.
 
 ### Main loop
 The main loop creates a `QuizRapid` object that runs your `QuizParticipant`. 
