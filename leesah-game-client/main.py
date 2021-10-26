@@ -44,7 +44,3 @@ def main():
             rapid.run(MyParticipant())
     except KeyboardInterrupt:
         print("\nstopping...")
-
-
-if __name__ == "__main__":
-    main()
