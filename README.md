@@ -119,3 +119,5 @@ There are two methods you need to implement in your own class.
 **1. Dont be afraid to answer several times to the same question** *(Except for questions that requires you don't)*
 
 **2. Filter out question categories and write handler functions**
+
+**3. Ask us! We don't bite :)**
