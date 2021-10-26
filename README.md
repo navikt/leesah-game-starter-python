@@ -74,6 +74,20 @@ som useful boilerplate so you can focus on the fun part, answering questions! ðŸ
 The code you need to extend is all located in `./lessah-game-client/main.py` when you run `python3 leesah-game-client` 
 the `main()` function in `./lessah-game-client/main.py` is executed.
 
+
+### Configuration
+**Remember to change the team name!** We will explain `CONSUMER_GROUP_ID` during the quiz, but if you are curious see [here for a in-depth explanation](https://docs.confluent.io/platform/current/clients/consumer.html#consumer-groups) 
+
+```python
+# Config ##########
+
+TEAM_NAME = "CHANGE ME"
+QUIZ_TOPIC = "quiz-rapid"
+CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
+
+# #################
+```
+
 ### Main loop
 The main loop creates a `QuizRapid` object that runs your `QuizParticipant`. 
 
