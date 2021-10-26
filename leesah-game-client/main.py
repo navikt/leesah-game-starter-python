@@ -32,8 +32,7 @@ class MyParticipant(quiz_rapid.QuizParticipant):
 # --------------------------------------------------------------------- Question handlers
 
     def handle_register_team(self, question):
-        pass
-        # self.publish_answer(question.messageId, question.category, TEAM_NAME)
+        self.publish_answer(question.messageId, question.category, TEAM_NAME)
 
 
 def main():
