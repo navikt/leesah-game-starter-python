@@ -54,10 +54,28 @@ class QuizParticipant(ABC):
 
     @abstractmethod
     def handle_question(self, question: Question):
+        """
+        handle questions received from the quiz topic.
+
+        Parameters
+        ----------
+            question : Question
+                question issued by the quizmaster
+
+        """
         pass
 
     @abstractmethod
     def handle_assessment(self, assessment: Assessment):
+        """
+        handle assessments received from the quiz topic.
+
+        Parameters
+        ----------
+            assessment : Assessment
+                assessment of an answer by the quizmaster
+
+        """
         pass
 
     def publish_answer(self, question_id: str, category: str, answer: str):
