@@ -13,7 +13,7 @@ class Consumer:
                 bootstrap_servers=bootstrap_servers,
                 group_id=consumer_group_id,
                 auto_offset_reset="earliest",
-                auto_commit=auto_commit
+                enable_auto_commit=auto_commit
             )
         else:
             self.consumer = KafkaConsumer(
