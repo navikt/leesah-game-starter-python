@@ -79,6 +79,19 @@ class QuizParticipant(ABC):
         pass
 
     def publish_answer(self, question_id: str, category: str, answer: str):
+        """
+        publishes an answer to a specific question id with a category
+
+        Parameters
+        ----------
+            question_id : str
+                the messageId of the question to be answered
+            category : str
+                the category of the question to be answered
+            answer : str
+                the answer to the question asked
+
+        """
         self.publish(Answer(question_id, category, self._team_name, answer))
 
     def publish(self, answer: Answer):
