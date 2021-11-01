@@ -36,6 +36,7 @@ class MyParticipant(quiz_rapid.QuizParticipant):
 
 
 def main():
+    assert TEAM_NAME is not None and TEAM_NAME != "CHANGE ME", "Husk å gi teamet ditt et navn"
     rapid = quiz_rapid.QuizRapid(
         TEAM_NAME, QUIZ_TOPIC, HOSTED_KAFKA, CONSUMER_GROUP_ID, False
     )
