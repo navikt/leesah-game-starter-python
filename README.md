@@ -63,8 +63,23 @@ or see guide [here](https://packaging.python.org/guides/installing-using-pip-and
 python3 -m pip install -r requirements.txt
 ```
 
+### 3. Download Kafka certificates
+- In your browser, navigate to: https://leesah-quiz.labs.nais.io/certs
+  - Enter username and password provided by the course crew
+- unzip downloaded file
+- Place the containing files (`ca.pem`, `service.cert` and `service.key`) in `certs/` under the project directory
 
-### 3. Run the application
+The result should look like this:
+```bash
+leesah-game-starter
+├── certs
+│   ├── .gitignore
+│   ├── ca.pem
+│   ├── service.cert
+│   └── service.key
+```
+
+### 4. Run the application
 
 Run the application from the terminal using:
 
