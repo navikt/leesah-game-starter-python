@@ -23,8 +23,8 @@ class MyParticipant(quiz_rapid.QuizParticipant):
     def handle_question(self, question: quiz_rapid.Question):
         pprint.pp(question)
 
-    #    if question.category == "team-registration":
-    #        self.handle_register_team(question)
+        # if question.category == "team-registration":
+        #     self.handle_register_team(question)
 
     def handle_assessment(self, assessment: quiz_rapid.Assessment):
         pprint.pp(assessment)
@@ -32,7 +32,11 @@ class MyParticipant(quiz_rapid.QuizParticipant):
     # --------------------------------------------------------------------- Question handlers
 
     def handle_register_team(self, question: quiz_rapid.Question):
-        self.publish_answer(question.messageId, question.category, TEAM_NAME)
+        self.publish_answer(
+            question_id = question.messageId, 
+            category = question.category, 
+            answer = TEAM_NAME
+        )
 
 
 def main():
