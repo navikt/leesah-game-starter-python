@@ -29,12 +29,18 @@
 ````
 ## Setup 📝
 
+To get started, either clone with git or download the repository:
+
+**git clone**
+```
+git clone https://github.com/navikt/leesah-game-starter.git
+```
+
 **Download repository**
 ```
 Click 'Code' on top of this page
-Click 'Download ZIP'
-Unpack ZIP
-Move files to 'certs'-folder
+Click 'Download ZIP' and download the the repository into the folder you want to store the files in
+Unpack ZIP 
 ```
 
 ### 1.Setup virtual environment for the project
