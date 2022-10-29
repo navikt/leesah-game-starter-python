@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import json
 import enum
+from typing import Set
 
 from .producer import Producer
 from .consumer import Consumer
@@ -97,7 +98,7 @@ class QuizParticipant(ABC):
     def publish(self, answer: Answer):
         self._outbox.add(answer)
 
-    def messages(self) -> set[Answer]:
+    def messages(self) -> Set[Answer]:
         out = self._outbox
         self._outbox = set()
         return out
