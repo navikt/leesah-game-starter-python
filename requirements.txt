@@ -1,2 +1,2 @@
-kafka-python==2.0.2
 schema==0.7.4
+confluent-kafka==1.9.2

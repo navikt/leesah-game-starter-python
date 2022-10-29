@@ -6,11 +6,15 @@ import json
 import enum
 from typing import Set
 
-from .producer import Producer
-from .consumer import Consumer
-from .schemas import (Question as SchemaQuestion, Assessment as SchemaAssessment)
-from . import config
+from confluent_kafka import Consumer, Producer
+from .kafka import consumer_config, producer_config
 
+from .schemas import (Question as SchemaQuestion, Assessment as SchemaAssessment)
+from .config import ENCODING
+
+
+deserialize = lambda value: json.loads(value.decode(ENCODING))
+serialize = lambda value: json.dumps(value).encode(ENCODING)
 
 @dataclass(eq=True, frozen=True)
 class Answer:
@@ -136,12 +140,10 @@ class QuizRapid:
                 specify a custom consumer to use (Default None)
         """
         if consumer is None:
-            consumer = Consumer(topic,
-                                auto_commit,
-                                consumer_group_id,
-                                bootstrap_servers)
+            consumer = Consumer(consumer_config(bootstrap_servers, consumer_group_id, auto_commit))
+            consumer.subscribe([topic])
         if producer is None:
-            producer = Producer(topic, bootstrap_servers)
+            producer = Producer(producer_config(bootstrap_servers))
         self._name = team_name
         self._producer = producer
         self._consumer = consumer
@@ -149,19 +151,19 @@ class QuizRapid:
         self._commit_offset = auto_commit
 
     def run(self, participant: QuizParticipant):
-        raw_msgs = self._consumer.consumer.poll(timeout_ms=1000)
-        for tp, msgs in raw_msgs.items():
-            for msg in msgs:
-                msg = deserialize(msg.value)
-                if SchemaQuestion.is_valid(msg):
-                    participant.handle_question(
-                        Question(msg["messageId"], msg["question"], msg["category"], msg["type"]))
-                if SchemaAssessment.is_valid(msg) and msg["teamName"] == self._name:
-                    participant.handle_assessment(
-                        Assessment(msg["messageId"], msg["category"], msg["teamName"], msg["questionId"],
-                                   msg["answerId"], AssessmentStatus[msg["status"].upper()], msg["sign"], msg["type"]))
+        msg = self._consumer.poll(timeout=1000)
+        if msg is None:
+            return
+        msg = deserialize(msg.value())
+        if SchemaQuestion.is_valid(msg):
+            participant.handle_question(
+                Question(msg["messageId"], msg["question"], msg["category"], msg["type"]))
+        if SchemaAssessment.is_valid(msg) and msg["teamName"] == self._name:
+            participant.handle_assessment(
+                Assessment(msg["messageId"], msg["category"], msg["teamName"], msg["questionId"],
+                           msg["answerId"], AssessmentStatus[msg["status"].upper()], msg["sign"], msg["type"]))
         for message in participant.messages():
-            self._producer.send(dataclasses.asdict(message), self._topic)
+            self._producer.produce(topic=self._topic, value=serialize(dataclasses.asdict(message)))
 
         if self._commit_offset:
             self.commit_offset()
@@ -169,5 +171,3 @@ class QuizRapid:
     def commit_offset(self):
         self._consumer.consumer.commit()
 
-
-deserialize = lambda value: json.loads(value.decode(config.ENCODING))
