@@ -139,19 +139,20 @@ class QuizRapid:
             consumer : Consumer, optional
                 specify a custom consumer to use (Default None)
         """
+        self.running = True
         if consumer is None:
             consumer = Consumer(consumer_config(bootstrap_servers, consumer_group_id, auto_commit))
             consumer.subscribe([topic])
         if producer is None:
             producer = Producer(producer_config(bootstrap_servers))
         self._name = team_name
-        self._producer = producer
-        self._consumer = consumer
+        self._producer: Producer = producer
+        self._consumer: Consumer = consumer
         self._topic = topic
         self._commit_offset = auto_commit
 
     def run(self, participant: QuizParticipant):
-        msg = self._consumer.poll(timeout=1000)
+        msg = self._consumer.poll(timeout=1)
         if msg is None:
             return
         msg = deserialize(msg.value())
@@ -164,10 +165,16 @@ class QuizRapid:
                            msg["answerId"], AssessmentStatus[msg["status"].upper()], msg["sign"], msg["type"]))
         for message in participant.messages():
             self._producer.produce(topic=self._topic, value=serialize(dataclasses.asdict(message)))
-
+            self._producer.flush(timeout=0.1)
         if self._commit_offset:
             self.commit_offset()
 
     def commit_offset(self):
         self._consumer.consumer.commit()
+
+    def close(self):
+        self.running = False
+        self._producer.flush()
+        self._consumer.close()
+
 

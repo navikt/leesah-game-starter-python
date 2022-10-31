@@ -28,7 +28,7 @@ class MyParticipant(quiz_rapid.QuizParticipant):
             self.handle_register_team(question)
 
     def handle_assessment(self, assessment: quiz_rapid.Assessment):
-        pprint.pp(assessment)
+        pass
 
     # --------------------------------------------------------------------- Question handlers
 
@@ -44,12 +44,18 @@ class MyParticipant(quiz_rapid.QuizParticipant):
 def main():
     assert TEAM_NAME is not None and TEAM_NAME != "CHANGE ME", "Husk å gi teamet ditt et navn"
     rapid = quiz_rapid.QuizRapid(
-        TEAM_NAME, QUIZ_TOPIC, LOCAL_KAFKA, CONSUMER_GROUP_ID, False
+        TEAM_NAME, QUIZ_TOPIC, LOCAL_KAFKA, CONSUMER_GROUP_ID, auto_commit=False
     )
 
     try:
         print("\n\t✅ Started client successfully\n")
-        while True:
+        while rapid.running:
             rapid.run(MyParticipant())
     except KeyboardInterrupt:
-        print("\nstopping...")
+        shutdown(rapid)
+
+
+def shutdown(rapid):
+    print("\n 🛑 shutting down...")
+    rapid.close()
+    sys.exit(1)
