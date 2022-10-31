@@ -1,20 +1,24 @@
 import dataclasses
+import enum
+import json
 import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-import json
-import enum
+from datetime import datetime
 from typing import Set
 
 from confluent_kafka import Consumer, Producer
-from .kafka import consumer_config, producer_config
 
-from .schemas import (Question as SchemaQuestion, Assessment as SchemaAssessment)
 from .config import ENCODING
+from .kafka import consumer_config, producer_config
+from .schemas import (Question as SchemaQuestion, Assessment as SchemaAssessment)
 
+ANSWER_LOG_COLOR = "\u001b[34m"
+QUESTION_LOG_COLOR = "\u001b[32m"
 
 deserialize = lambda value: json.loads(value.decode(ENCODING))
 serialize = lambda value: json.dumps(value).encode(ENCODING)
+
 
 @dataclass(eq=True, frozen=True)
 class Answer:
@@ -118,7 +122,11 @@ class QuizRapid:
                  consumer_group_id: str,
                  auto_commit: bool = True,
                  producer=None,
-                 consumer=None):
+                 consumer=None,
+                 logg_questions=False,
+                 logg_answers=False,
+                 short_log_line = False,
+                 log_ignore_list=None):
         """
         Constructs all the necessary attributes for the QuizRapid object.
 
@@ -138,6 +146,14 @@ class QuizRapid:
                 specify a custom Producer to use (Default None)
             consumer : Consumer, optional
                 specify a custom consumer to use (Default None)
+            logg_questions : bool, optional
+                should the QuizRapid logg incoming questions to the terminal (Default False)
+            logg_answers : bool, optional
+                should the QuizRapid logg outgoing answers to the terminal (Default False)
+            short_log_line : bool, optional
+                for enabled loggers, should the output be shortened keeping only essential fields (Default False)
+            log_ignore_list : list, optional
+                for enabled loggers, should any question categories be ignored (Default None)
         """
         self.running = True
         if consumer is None:
@@ -150,6 +166,10 @@ class QuizRapid:
         self._consumer: Consumer = consumer
         self._topic = topic
         self._commit_offset = auto_commit
+        self._logg_questions = logg_questions
+        self._logg_answers = logg_answers
+        self._short_log_line = short_log_line
+        self._log_ignore_list = log_ignore_list
 
     def run(self, participant: QuizParticipant):
         msg = self._consumer.poll(timeout=1)
@@ -157,13 +177,15 @@ class QuizRapid:
             return
         msg = deserialize(msg.value())
         if SchemaQuestion.is_valid(msg):
-            participant.handle_question(
-                Question(msg["messageId"], msg["question"], msg["category"], msg["type"]))
+            question = Question(msg["messageId"], msg["question"], msg["category"], msg["type"])
+            self._logg_question(question)
+            participant.handle_question(question)
         if SchemaAssessment.is_valid(msg) and msg["teamName"] == self._name:
             participant.handle_assessment(
                 Assessment(msg["messageId"], msg["category"], msg["teamName"], msg["questionId"],
                            msg["answerId"], AssessmentStatus[msg["status"].upper()], msg["sign"], msg["type"]))
         for message in participant.messages():
+            self._logg_answer(message)
             self._producer.produce(topic=self._topic, value=serialize(dataclasses.asdict(message)))
             self._producer.flush(timeout=0.1)
         if self._commit_offset:
@@ -177,4 +199,22 @@ class QuizRapid:
         self._producer.flush()
         self._consumer.close()
 
+    def _logg_question(self, question: Question):
+        if self._logg_questions and (self._log_ignore_list is None or question.category not in self._log_ignore_list):
+            question_dict = dataclasses.asdict(question)
+            if self._short_log_line:
+                question_dict.pop("messageId")
+                question_dict.pop("type")
+            print("\x1b[33;20m [{}][Q]\x1b[0m {}{}\x1b[0m"
+                  .format(datetime.now().time().isoformat(), QUESTION_LOG_COLOR, json.dumps(question_dict), ))
 
+    def _logg_answer(self, answer: Answer):
+        if self._logg_answers and (self._log_ignore_list is None or answer.category not in self._log_ignore_list):
+            answer_dict = dataclasses.asdict(answer)
+            if self._short_log_line:
+                answer_dict.pop("messageId")
+                answer_dict.pop("type")
+                answer_dict.pop("questionId")
+                answer_dict.pop("teamName")
+            print("\x1b[33;20m [{}][A]\x1b[0m {}{}\x1b[0m"
+                  .format(datetime.now().time().isoformat(), ANSWER_LOG_COLOR, json.dumps(answer_dict)))
