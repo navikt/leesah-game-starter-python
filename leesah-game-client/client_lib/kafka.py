@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Dict
 
@@ -8,17 +9,13 @@ def base_config(bootstrap_servers: str) -> Dict:
     }
     if "localhost" not in bootstrap_servers:
         CA_PATH = Path("certs/ca.pem")
-        KEYSTORE = Path("certs/service.cert")
-
-        assert CA_PATH.is_file()
-        assert KEYSTORE.is_file()
+        creds = json.loads(Path("certs/leesah_creds.json").open(mode="r").read())
 
         config = config | {
                     "security.protocol": "SSL",
-                    "ssl.check.hostname": "true",
                     "ssl.ca.location": CA_PATH,
-                    "ssl.keystore.location": KEYSTORE,
-                    "ssl.keystore.password": "changeme"
+                    "ssl.key.pem": creds["key"],
+                    "ssl.certificate.pem": creds["cert"]
                 }
     return config
 
