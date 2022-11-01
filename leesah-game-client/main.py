@@ -46,11 +46,11 @@ def main():
     rapid = quiz_rapid.QuizRapid(
         TEAM_NAME, QUIZ_TOPIC, LOCAL_KAFKA, CONSUMER_GROUP_ID, auto_commit=False
     )
-
+    participant = MyParticipant()
+    print("\n\t✅ Started client successfully\n")
     try:
-        print("\n\t✅ Started client successfully\n")
         while rapid.running:
-            rapid.run(MyParticipant())
+            rapid.run(participant)
     except KeyboardInterrupt:
         shutdown(rapid)
 
