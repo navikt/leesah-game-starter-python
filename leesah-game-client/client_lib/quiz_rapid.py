@@ -125,7 +125,7 @@ class QuizRapid:
                  consumer=None,
                  logg_questions=False,
                  logg_answers=False,
-                 short_log_line = False,
+                 short_log_line=False,
                  log_ignore_list=None):
         """
         Constructs all the necessary attributes for the QuizRapid object.

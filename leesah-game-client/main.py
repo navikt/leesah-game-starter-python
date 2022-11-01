@@ -1,7 +1,7 @@
+import sys
+
 from client_lib import quiz_rapid
-from client_lib.config import HOSTED_KAFKA, LOCAL_KAFKA
-import pprint
-import json
+from client_lib.config import LOCAL_KAFKA
 
 # LEESAH QUIZ GAME CLIENT
 
@@ -10,9 +10,11 @@ import json
 
 # Config ##########
 
-TEAM_NAME = "team 1"
+TEAM_NAME = "CHANGE ME"
 QUIZ_TOPIC = "quiz-rapid"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
+assert TEAM_NAME is not None and TEAM_NAME != "CHANGE ME", "Husk å gi teamet ditt et navn"
+
 
 # #################
 
@@ -22,8 +24,6 @@ class MyParticipant(quiz_rapid.QuizParticipant):
         super().__init__(TEAM_NAME)
 
     def handle_question(self, question: quiz_rapid.Question):
-        pprint.pp(question)
-
         if question.category == "team-registration":
             self.handle_register_team(question)
 
@@ -33,7 +33,6 @@ class MyParticipant(quiz_rapid.QuizParticipant):
     # --------------------------------------------------------------------- Question handlers
 
     def handle_register_team(self, question: quiz_rapid.Question):
-        print(json.dumps(question.__dict__))
         self.publish_answer(
             question_id=question.messageId,
             category=question.category,
@@ -42,11 +41,22 @@ class MyParticipant(quiz_rapid.QuizParticipant):
 
 
 def main():
-    assert TEAM_NAME is not None and TEAM_NAME != "CHANGE ME", "Husk å gi teamet ditt et navn"
     rapid = quiz_rapid.QuizRapid(
-        TEAM_NAME, QUIZ_TOPIC, LOCAL_KAFKA, CONSUMER_GROUP_ID, auto_commit=False
+        team_name=TEAM_NAME,
+        topic=QUIZ_TOPIC,
+        bootstrap_servers=LOCAL_KAFKA,
+        consumer_group_id=CONSUMER_GROUP_ID,
+        auto_commit=False,
+        logg_questions=True,
+        logg_answers=False,
+        short_log_line=False,
+        log_ignore_list=[]
     )
     participant = MyParticipant()
+    run(participant, rapid)
+
+
+def run(participant, rapid):
     print("\n\t✅ Started client successfully\n")
     try:
         while rapid.running:
