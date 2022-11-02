@@ -73,7 +73,7 @@ python3 -m pip install -r requirements.txt
 - In your browser, navigate to: https://leesah-quiz.labs.nais.io/certs
   - Enter username and password provided by the course crew
 - unzip downloaded file
-- Place the containing files (`ca.pem`, `service.cert` and `service.key`) in `certs/` under the project directory
+- Place the containing files (`ca.pem`, `leesah_cerds.json`) in `certs/` under the project directory
 
 The result should look like this:
 ```bash
@@ -81,8 +81,21 @@ leesah-game-starter
 ├── certs
 │   ├── .gitignore
 │   ├── ca.pem
-│   ├── service.cert
-│   └── service.key
+│   ├── leesah_cerds.json
+```
+
+
+### 4. Change the application config
+
+- set `TEAM_NAME` to your preferred team name 😼
+- set `QUIZ_TOPIC` to the topic name provided by the course administrators
+
+```python
+# Config ##########
+
+TEAM_NAME = "CHANGE ME"
+QUIZ_TOPIC = "quiz-rapid"
+CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 ```
 
 ### 4. Run the application
