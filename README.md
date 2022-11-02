@@ -81,7 +81,7 @@ leesah-game-starter
 ├── certs
 │   ├── .gitignore
 │   ├── ca.pem
-│   ├── leesah_cerds.json
+│   ├── leesah_creds.json
 ```
 
 
