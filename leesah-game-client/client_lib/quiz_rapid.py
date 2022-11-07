@@ -5,6 +5,7 @@ import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
+from json import JSONDecodeError
 from typing import Set
 
 from confluent_kafka import Consumer, Producer
@@ -26,6 +27,7 @@ class Answer:
     category: str
     teamName: str
     answer: str
+    created: str = datetime.now().isoformat()
     messageId: str = str(uuid.uuid4())
     type: str = "ANSWER"
 
@@ -35,6 +37,7 @@ class Question:
     messageId: str
     question: str
     category: str
+    created: str
     type: str = "QUESTION"
 
 
@@ -52,6 +55,7 @@ class Assessment:
     answerId: str
     status: AssessmentStatus
     sign: str
+    created: str
     type: str = "ASSESSMENT"
 
 
@@ -175,15 +179,20 @@ class QuizRapid:
         msg = self._consumer.poll(timeout=1)
         if msg is None:
             return
-        msg = deserialize(msg.value())
+        try:
+            msg = deserialize(msg.value())
+        except JSONDecodeError as e:
+            print(f"error: could not parse message: {msg.value()} error: {e}")
+            return
         if SchemaQuestion.is_valid(msg):
-            question = Question(msg["messageId"], msg["question"], msg["category"], msg["type"])
+            question = Question(msg["messageId"], msg["question"], msg["category"], msg["created"], msg["type"])
             self._logg_question(question)
             participant.handle_question(question)
         if SchemaAssessment.is_valid(msg) and msg["teamName"] == self._name:
             participant.handle_assessment(
                 Assessment(msg["messageId"], msg["category"], msg["teamName"], msg["questionId"],
-                           msg["answerId"], AssessmentStatus[msg["status"].upper()], msg["sign"], msg["type"]))
+                           msg["answerId"], AssessmentStatus[msg["status"].upper()], msg["sign"], msg["created"],
+                           msg["type"]))
         for message in participant.messages():
             self._logg_answer(message)
             self._producer.produce(topic=self._topic, value=serialize(dataclasses.asdict(message)))
@@ -192,7 +201,7 @@ class QuizRapid:
             self.commit_offset()
 
     def commit_offset(self):
-        self._consumer.consumer.commit()
+        self._consumer.commit()
 
     def close(self):
         self.running = False

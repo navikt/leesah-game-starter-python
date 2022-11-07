@@ -4,7 +4,8 @@ Question = Schema({
     "messageId": str,
     "type": "QUESTION",
     "category": str,
-    "question": str
+    "question": str,
+    "created": str,
 })
 
 Answer = Schema({
@@ -12,7 +13,8 @@ Answer = Schema({
     "questionId": str,
     "type": "ANSWER",
     "teamName": str,
-    "answer": str
+    "answer": str,
+    "created": str,
 })
 
 Assessment = Schema({
@@ -23,5 +25,6 @@ Assessment = Schema({
     "category": str,
     "teamName": str,
     "status": Or("SUCCESS", "FAILURE"),
+    "created": str,
     "sign": str
 })
