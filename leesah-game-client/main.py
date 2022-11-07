@@ -53,21 +53,4 @@ def main():
         short_log_line=False,  # Logg bare en forkortet versjon av meldingene
         log_ignore_list=[]     # Liste med spørsmålskategorier loggingen skal ignorere
     )
-    participant = MyParticipant()
-    run(participant, rapid)
-
-
-def run(participant, rapid):
-    print("\n\t✅ Started client successfully\n")
-    try:
-        while rapid.running:
-            rapid.run(participant)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        shutdown(rapid)
-
-
-def shutdown(rapid):
-    print("\n 🛑 shutting down...")
-    rapid.close()
+    return MyParticipant(), rapid
