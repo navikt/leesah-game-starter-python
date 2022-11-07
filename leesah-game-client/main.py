@@ -23,7 +23,6 @@ class MyParticipant(quiz_rapid.QuizParticipant):
         super().__init__(TEAM_NAME)
 
     def handle_question(self, question: quiz_rapid.Question):
-        pass
         raise NotImplementedError("Her må du implementere håndtering av spørsmål 😎")
         # if question.category == "team-registration":
         #     self.handle_register_team(question)
