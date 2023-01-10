@@ -4,14 +4,18 @@ from client_lib.config import HOSTED_KAFKA
 # LEESAH QUIZ GAME CLIENT
 
 # 1. Change TEAM_NAME variable to your team name
-# 2. make sure you have downloaded and unpacked the credential files in the certs/ dir
+# 2. Change HEX_CODE variable to your favorite color
+# 3. Change QUIZ_TOPIC variable to the quiz topic
+# 4. Make sure you have downloaded and unpacked the credential files in the certs/ dir
 
 # Config ##########################################################################################################
 
 TEAM_NAME = "CHANGE ME"
+HEX_CODE = "CHANGE ME"
 QUIZ_TOPIC = "CHANGE ME"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 assert TEAM_NAME is not None and TEAM_NAME != "CHANGE ME", "Husk å gi teamet ditt et navn"
+assert HEX_CODE is not None and HEX_CODE != "CHANGE ME", "Husk å gi teamet ditt en farge"
 assert QUIZ_TOPIC is not None and QUIZ_TOPIC != "CHANGE ME", "Husk å sett riktig topic navn"
 
 # ##################################################################################################################
@@ -36,7 +40,8 @@ class MyParticipant(quiz_rapid.QuizParticipant):
     #     self.publish_answer(
     #         question_id=question.messageId,
     #         category=question.category,
-    #         answer=TEAM_NAME
+    #         team_name=TEAM_NAME,
+    #         answer=HEX_CODE
     #     )
 
 #####################################################################################################################
@@ -48,7 +53,7 @@ def main():
         topic=QUIZ_TOPIC,
         bootstrap_servers=HOSTED_KAFKA,
         consumer_group_id=CONSUMER_GROUP_ID,
-        auto_commit=False,     # Bare sku på denne om du vet hva du driver med :)
+        auto_commit=False,     # Bare skru på denne om du vet hva du driver med :)
         logg_questions=True,   # Logg spørsmålene appen mottar
         logg_answers=True,     # Logg svarene appen sender
         short_log_line=False,  # Logg bare en forkortet versjon av meldingene
