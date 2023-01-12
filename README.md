@@ -88,12 +88,14 @@ leesah-game-starter
 ### 4. Change the application config
 
 - set `TEAM_NAME` to your preferred team name 😼
+- set `HEX_CODE` to your preferred team color 😼
 - set `QUIZ_TOPIC` to the topic name provided by the course administrators
 
 ```python
 # Config ##########
 
 TEAM_NAME = "CHANGE ME"
+HEX_CODE = "CHANGE ME"
 QUIZ_TOPIC = "quiz-rapid"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 ```
@@ -124,6 +126,7 @@ the `main()` function in `./lessah-game-client/main.py` is executed.
 # Config ##########
 
 TEAM_NAME = "CHANGE ME"
+HEX_CODE = "CHANGE ME"
 QUIZ_TOPIC = "quiz-rapid"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 
