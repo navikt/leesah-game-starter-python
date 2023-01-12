@@ -10,11 +10,11 @@ from client_lib.config import HOSTED_KAFKA
 # Config ###############################################################################
 
 TEAM_NAME = "CHANGE ME"
+HEX_CODE = "CHANGE ME"
 QUIZ_TOPIC = "CHANGE ME"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 
 # #####################################################################################
-
 
 class MyParticipant(quiz_rapid.QuizParticipant):
     def __init__(self):
@@ -35,9 +35,8 @@ class MyParticipant(quiz_rapid.QuizParticipant):
     #     self.publish_answer(
     #         question_id=question.messageId,
     #         category=question.category,
-    #         answer=TEAM_NAME
+    #         answer=HEX_CODE
     #     )
-
 
 def main():
     rapid = quiz_rapid.QuizRapid(
