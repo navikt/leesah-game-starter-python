@@ -70,7 +70,7 @@ python3 -m pip install -r requirements.txt
 ```
 
 ### 3. Download Kafka certificates
-- In your browser, navigate to: https://leesah-quiz.labs.nais.io/certs
+- In your browser, navigate to link provided by the course hosts.
   - Enter username and password provided by the course crew
 - unzip downloaded file
 - Place the containing files (`ca.pem`, `leesah_cerds.json`) in `certs/` under the project directory
