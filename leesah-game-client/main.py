@@ -4,18 +4,16 @@ from client_lib.config import HOSTED_KAFKA
 # LEESAH QUIZ GAME CLIENT
 
 # 1. Change TEAM_NAME variable to your team name
-# 2. make sure you have downloaded and unpacked the credential files in the certs/ dir
+# 2. Change HEX_CODE variable to your teams favorite color
+# 3. Make sure you have downloaded and unpacked the credential files in the certs/ dir
 
-# Config ##########
+# Config ###############################################################################
 
 TEAM_NAME = "CHANGE ME"
 QUIZ_TOPIC = "CHANGE ME"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
-assert TEAM_NAME is not None and TEAM_NAME != "CHANGE ME", "Husk å gi teamet ditt et navn"
-assert QUIZ_TOPIC is not None and QUIZ_TOPIC != "CHANGE ME", "Husk å sett riktig topic navn"
 
-
-# #################
+# #####################################################################################
 
 
 class MyParticipant(quiz_rapid.QuizParticipant):

@@ -88,7 +88,7 @@ leesah-game-starter
 ### 4. Change the application config
 
 - set `TEAM_NAME` to your preferred team name 😼
-- set `HEX_CODE` to your preferred team color 😼
+- set `HEX_CODE` to your preferred team color (without #)
 - set `QUIZ_TOPIC` to the topic name provided by the course administrators
 
 ```python
