@@ -95,7 +95,7 @@ leesah-game-starter
 # Config ##########
 
 TEAM_NAME = "CHANGE ME"
-HEX_CODE = "CHANGE ME"
+HEX_CODE = "CHANGE ME" #(without #)
 QUIZ_TOPIC = "quiz-rapid"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 ```

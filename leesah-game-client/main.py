@@ -4,13 +4,13 @@ from client_lib.config import HOSTED_KAFKA
 # LEESAH QUIZ GAME CLIENT
 
 # 1. Change TEAM_NAME variable to your team name
-# 2. Change HEX_CODE variable to your teams favorite color
+# 2. Change HEX_CODE variable to your teams favorite color (without #)
 # 3. Make sure you have downloaded and unpacked the credential files in the certs/ dir
 
 # Config ###############################################################################
 
 TEAM_NAME = "CHANGE ME"
-HEX_CODE = "CHANGE ME"
+HEX_CODE = "CHANGE ME"  #(without '#')
 QUIZ_TOPIC = "CHANGE ME"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 
