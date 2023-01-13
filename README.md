@@ -107,6 +107,20 @@ Run the application from the terminal using:
 ```bash
 python3 leesah-game-client
 ```
+
+#### If you get errors
+If you are on Python 3.11, try to change the version of Python to 3.10. Check version with
+
+```bash
+python3 --version
+```
+
+and change to 3.10 with the following command:
+
+```bash
+export PATH="$(brew --prefix python@3.10)/bin:$PATH"
+```
+
 *The project comes with a \_\_main\_\_.py file that makes the directory runnable*
 
 ## Developing your quiz participant 🤖
