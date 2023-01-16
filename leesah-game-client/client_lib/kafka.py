@@ -1,21 +1,21 @@
-import json
 from pathlib import Path
 from typing import Dict
-
+import yaml
+from yaml.loader import SafeLoader
 
 def base_config(bootstrap_servers: str) -> Dict:
     config = {
         "bootstrap.servers": bootstrap_servers
     }
     if "localhost" not in bootstrap_servers:
-        CA_PATH = Path("certs/ca.pem")
-        creds = json.loads(Path("certs/leesah_creds.json").open(mode="r").read())
-
+        # CA_PATH = Path("certs/ca.pem")
+        # creds = json.loads(Path("certs/leesah_creds.json").open(mode="r").read())
+        creds = yaml.load(Path("certs/leesah-creds.yaml").open(mode="r").read(), Loader=SafeLoader)
         config = config | {
                     "security.protocol": "SSL",
-                    "ssl.ca.location": CA_PATH,
-                    "ssl.key.pem": creds["key"],
-                    "ssl.certificate.pem": creds["cert"]
+                    "ssl.ca.pem": creds["ca"],
+                    "ssl.key.pem": creds['user']["access_key"],
+                    "ssl.certificate.pem": creds['user']["access_cert"]
                 }
     return config
 
