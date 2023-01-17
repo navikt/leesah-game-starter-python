@@ -31,7 +31,7 @@
 
 To get started, either clone with git or download the repository:
 
-**git clone**
+**Clone project with git**
 ```
 git clone https://github.com/navikt/leesah-game-starter.git
 ```
@@ -72,31 +72,30 @@ python3 -m pip install -r requirements.txt
 ### 3. Download Kafka certificates
 - In your browser, navigate to link provided by the course hosts.
   - Enter username and password provided by the course crew
-- unzip downloaded file
-- Place the containing files (`ca.pem`, `leesah_cerds.json`) in `certs/` under the project directory
+- Unzip downloaded file
+- Place the containing files (`leesah-creds.yaml`) in `certs/` under the project directory
 
 The result should look like this:
 ```bash
 leesah-game-starter
 ├── certs
 │   ├── .gitignore
-│   ├── ca.pem
-│   ├── leesah_creds.json
+│   ├── leesah-creds.yaml
 ```
 
 
 ### 4. Change the application config
 
-- set `TEAM_NAME` to your preferred team name 😼
-- set `HEX_CODE` to your preferred team color (without #)
-- set `QUIZ_TOPIC` to the topic name provided by the course administrators
+- Set `TEAM_NAME` to your preferred team name 😼
+- Set `HEX_CODE` to your preferred team color (without #)
+- Set `QUIZ_TOPIC` to the topic name provided by the course administrators
 
 ```python
 # Config ##########
 
 TEAM_NAME = "CHANGE ME"
 HEX_CODE = "CHANGE ME" #(without #)
-QUIZ_TOPIC = "quiz-rapid"
+QUIZ_TOPIC = "CHANGE ME"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 ```
 
@@ -108,26 +107,13 @@ Run the application from the terminal using:
 python3 leesah-game-client
 ```
 
-#### If you get errors
-If you are on Python 3.11, try to change the version of Python to 3.10. Check version with
-
-```bash
-python3 --version
-```
-
-and change to 3.10 with the following command:
-
-```bash
-export PATH="$(brew --prefix python@3.10)/bin:$PATH"
-```
-
 *The project comes with a \_\_main\_\_.py file that makes the directory runnable*
 
 ## Developing your quiz participant 🤖
 
 Your challenge is to implement a QuizParticipant that answers all the question messages that are
 published by the quizmaster 🧙. You are free to develop your application as you want but this starter project comes with 
-som useful boilerplate so you can focus on the fun part, answering questions! 🎉
+some useful boilerplate, so you can focus on the fun part, answering questions! 🎉
 
 The code you need to extend is all located in `./lessah-game-client/main.py` when you run `python3 leesah-game-client` 
 the `main()` function in `./lessah-game-client/main.py` is executed.
@@ -141,7 +127,7 @@ the `main()` function in `./lessah-game-client/main.py` is executed.
 
 TEAM_NAME = "CHANGE ME"
 HEX_CODE = "CHANGE ME"
-QUIZ_TOPIC = "quiz-rapid"
+QUIZ_TOPIC = "CHANGE ME"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 
 # #################
@@ -175,7 +161,7 @@ There are two methods you need to implement in your own class.
 
 ## Tips and Tricks 💡
 
-**1. Dont be afraid to answer several times to the same question** *(Except for questions that requires you don't)*
+**1. Dont be afraid to answer the same question multiple times** *(Except for questions that requires you don't)*
 
 **2. Filter out question categories and write handler functions**
 

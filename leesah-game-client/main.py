@@ -3,9 +3,10 @@ from client_lib.config import HOSTED_KAFKA
 
 # LEESAH QUIZ GAME CLIENT
 
-# 1. Change TEAM_NAME variable to your team name
-# 2. Change HEX_CODE variable to your teams favorite color
-# 3. Make sure you have downloaded and unpacked the credential files in the certs/ dir
+# 1. Set `TEAM_NAME` to your preferred team name
+# 2. Set `HEX_CODE` to your preferred team color (without #)
+# 3. Set `QUIZ_TOPIC` to the topic name provided by the course administrators
+# 4. Make sure you have downloaded and unpacked the credential files in the certs/ dir
 
 # Config ##########################################################################################################
 
