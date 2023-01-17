@@ -4,17 +4,18 @@ from client_lib.config import HOSTED_KAFKA
 # LEESAH QUIZ GAME CLIENT
 
 # 1. Change TEAM_NAME variable to your team name
-# 2. Change HEX_CODE variable to your teams favorite color (without #)
+# 2. Change HEX_CODE variable to your teams favorite color
 # 3. Make sure you have downloaded and unpacked the credential files in the certs/ dir
 
-# Config ###############################################################################
+# Config ##########################################################################################################
 
 TEAM_NAME = "CHANGE ME"
 HEX_CODE = "CHANGE ME"  #(without '#')
 QUIZ_TOPIC = "CHANGE ME"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 
-# #####################################################################################
+# ##################################################################################################################
+
 
 class MyParticipant(quiz_rapid.QuizParticipant):
     def __init__(self):
@@ -26,7 +27,6 @@ class MyParticipant(quiz_rapid.QuizParticipant):
         #     self.handle_register_team(question)
 
     def handle_assessment(self, assessment: quiz_rapid.Assessment):
-        # Her kan du implementere feks loggig av assessments om du ønsker
         pass
 
 # ---------------------------------------------------------------------------- Question handlers
@@ -44,7 +44,7 @@ def main():
         topic=QUIZ_TOPIC,
         bootstrap_servers=HOSTED_KAFKA,
         consumer_group_id=CONSUMER_GROUP_ID,
-        auto_commit=False,     # Bare sku på denne om du vet hva du driver med :)
+        auto_commit=False,     # Bare skru på denne om du vet hva du driver med :)
         logg_questions=True,   # Logg spørsmålene appen mottar
         logg_answers=True,     # Logg svarene appen sender
         short_log_line=False,  # Logg bare en forkortet versjon av meldingene
