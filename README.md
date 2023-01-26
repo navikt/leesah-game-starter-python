@@ -84,7 +84,7 @@ leesah-game-starter
 ```
 
 
-### 4. Change the application config
+### 4. Change the application config in main.py
 
 - Set `TEAM_NAME` to your preferred team name 😼
 - Set `HEX_CODE` to your preferred team color (without #)
