@@ -144,3 +144,6 @@ dmypy.json
 cython_debug/
 
 .idea
+
+leesah-game-client/fasit.py
+.gitignore
