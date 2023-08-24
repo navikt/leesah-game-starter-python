@@ -90,14 +90,14 @@ leesah-game-starter
 ### 5. Change the application config in main.py
 
 - Set `TEAM_NAME` to your preferred team name 😼 NB! Do not change this during the course!!
-- Set `HEX_CODE` to your preferred team color (without #)
+- Set `HEX_CODE` to your preferred team color
 - Set `QUIZ_TOPIC` to the topic name provided by the course administrators
 
 ```python
 # Config ##########
 
 TEAM_NAME = "CHANGE ME"
-HEX_CODE = "CHANGE ME" #(without #)
+HEX_CODE = "CHANGE ME"
 QUIZ_TOPIC = "CHANGE ME"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 ```
