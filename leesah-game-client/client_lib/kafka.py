@@ -11,7 +11,7 @@ def base_config(bootstrap_servers: str) -> Dict:
     if "localhost" not in bootstrap_servers:
         # CA_PATH = Path("certs/ca.pem")
         # creds = json.loads(Path("certs/leesah_creds.json").open(mode="r").read())
-        creds = yaml.load(Path("certs/leesah-creds.yaml").open(mode="r").read(), Loader=SafeLoader)
+        creds = yaml.load(Path("certs/student-certs.yaml").open(mode="r").read(), Loader=SafeLoader)
         config = config | {
             "security.protocol": "SSL",
             "ssl.ca.pem": creds["ca"],
