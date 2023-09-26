@@ -152,3 +152,12 @@ There are two methods you need to implement in your own class:
 **2. Filter out question categories and write handler functions**
 
 **3. Ask us! We don't bite :)**
+
+## Feilsøking
+
+Hvis du får følgende når du prøver å installere requirements:
+
+`Failed to build confluent-kafka
+ERROR: Could not build wheels for confluent-kafka, which is required to install pyproject.toml-based projects`
+
+[Prøv løsningen her](https://stackoverflow.com/questions/72343232/pip-install-confluent-kafka-gives-error-in-mac)
