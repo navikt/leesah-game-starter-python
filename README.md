@@ -76,7 +76,7 @@ python3 -m pip install -r requirements.txt
 ### 4. Download Kafka certificates
 - In your browser, navigate to link provided by the course hosts.
   - Enter username and password provided by the course crew
-- Press ctrl+s or cmd+s to save the file, name it `leesah-creds.yaml` and save it in `certs/` under the project directory 
+- Press ctrl+s or cmd+s to save the file, name it `student-cert.yaml` and save it in `certs/` under the project directory 
 
 The result should look like this:
 ```bash
