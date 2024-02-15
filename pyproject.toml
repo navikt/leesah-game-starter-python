@@ -8,9 +8,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-schema = "^0.7.5"
 confluent-kafka = "^2.3.0"
 PyYAML = "^6.0.1"
+pydantic = "^2.6.1"
 
 [build-system]
 requires = ["poetry-core"]
