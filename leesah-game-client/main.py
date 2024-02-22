@@ -1,3 +1,5 @@
+import uuid
+
 from client_lib import quiz_rapid
 from client_lib.config import HOSTED_KAFKA
 
@@ -46,7 +48,7 @@ def main():
         team_name=TEAM_NAME,
         topic=QUIZ_TOPIC,
         bootstrap_servers=HOSTED_KAFKA,
-        consumer_group_id=CONSUMER_GROUP_ID,
+        consumer_group_id=str(uuid.uuid4()),
         auto_commit=False,  # Bare skru på denne om du vet hva du driver med :)
         logg_questions=True,  # Logg spørsmålene appen mottar
         logg_answers=True,  # Logg svarene appen sender
