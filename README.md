@@ -37,7 +37,7 @@
 
 **Clone project with git**
 ```
-git clone https://github.com/navikt/leesah-game-starter.git
+git clone https://github.com/navikt/leesah-game-starter-python.git
 ```
 
 **Download repository**
