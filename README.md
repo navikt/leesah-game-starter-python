@@ -33,7 +33,7 @@
   - A teammate 🐶
 
 ## Setup 📝
-### 1. To get started, either clone with git or download the repository:
+### 1. To get started, either clone with git or download the repository: (If you've already cloned the project, go to step 2!)
 
 **Clone project with git**
 ```
@@ -101,7 +101,22 @@ QUIZ_TOPIC = "CHANGE ME"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 ```
 
-### 6. Run the application
+### 6. Add the required code to solve the first question!
+
+Below you can see example code of how to solve the first question.
+
+```python
+     def handle_register_team(self, question: quiz_rapid.Question):
+         self.publish_answer(
+             question_id=question.messageId,
+             category=question.category,
+             answer=HEX_CODE
+         )
+```
+
+Paste it in the correct place in the main.py-file!
+
+### 7. Run the application
 
 Run the application from the terminal using:
 
