@@ -26,21 +26,17 @@ class MyParticipant(quiz_rapid.QuizParticipant):
         super().__init__(TEAM_NAME)
 
     def handle_question(self, question: quiz_rapid.Question):
-        raise NotImplementedError("Her må du implementere håndtering av spørsmål 😎")
-        # if question.category == "team-registration":
-        #     self.handle_register_team(question)
+        if question.category == "team-registration":
+            self.handle_register_team(question)
 
     def handle_assessment(self, assessment: quiz_rapid.Assessment):
         pass
 
     # ---------------------------------------------------------------------------- Question handlers
 
-    # def handle_register_team(self, question: quiz_rapid.Question):
-    #     self.publish_answer(
-    #         question_id=question.messageId,
-    #         category=question.category,
-    #         answer=HEX_CODE
-    #     )
+    def handle_register_team(self, question: quiz_rapid.Question):
+        # Add code here to solve the first question!
+        
 
 
 def main():
