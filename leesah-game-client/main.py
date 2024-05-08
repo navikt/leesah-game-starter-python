@@ -35,7 +35,7 @@ class MyParticipant(quiz_rapid.QuizParticipant):
     # ---------------------------------------------------------------------------- Question handlers
 
     def handle_register_team(self, question: quiz_rapid.Question):
-        # Add code here to solve the first question!
+        # Add code here to solve the first question! Hint: Check Readme 😎
         
 
 
