@@ -1,5 +1,4 @@
 import dataclasses
-import enum
 import json
 import uuid
 from abc import ABC, abstractmethod
@@ -12,7 +11,7 @@ from confluent_kafka import Consumer, Producer
 
 from .config import ENCODING
 from .kafka import consumer_config, producer_config
-from .schemas import (Question as SchemaQuestion, Assessment as SchemaAssessment)
+from .schemas import (Svar as SchemaSvar, Spørsmål as SchemaSpørsmål)
 
 ANSWER_LOG_COLOR = "\u001b[34m"
 QUESTION_LOG_COLOR = "\u001b[32m"
@@ -20,53 +19,35 @@ QUESTION_LOG_COLOR = "\u001b[32m"
 deserialize = lambda value: json.loads(value.decode(ENCODING))
 serialize = lambda value: json.dumps(value).encode(ENCODING)
 
+@dataclass
+class Spørsmål:
+    type: str = "SPØRSMÅL"
+    spørsmålId: str
+    spørsmål: str
+    kategorinavn: str
+    svarFormat: str
 
 @dataclass(eq=True, frozen=True)
-class Answer:
-    questionId: str
-    category: str
-    teamName: str
-    answer: str
-    created: str = datetime.now().isoformat()
-    messageId: str = str(uuid.uuid4())
-    type: str = "ANSWER"
+class Svar:
+    type: str = "SVAR"
+    kategorinavn: str
+    lagnavn: str
+    svar: str
+    spørsmålId: str
+    svarId: str = str(uuid.uuid4())
+    opprettet: str = datetime.now().isoformat()
 
 
-@dataclass
-class Question:
-    messageId: str
-    question: str
-    category: str
-    created: str
-    type: str = "QUESTION"
-
-
-class AssessmentStatus(enum.Enum):
-    SUCCESS = "SUCCESS"
-    FAILURE = "FAILURE"
-
-
-@dataclass
-class Assessment:
-    messageId: str
-    category: str
-    teamName: str
-    questionId: str
-    answerId: str
-    status: AssessmentStatus
-    sign: str
-    created: str
-    type: str = "ASSESSMENT"
 
 
 class QuizParticipant(ABC):
 
-    def __init__(self, team_name: str):
+    def __init__(self, lagnavn: str):
         self._outbox = set()
-        self._team_name = team_name
+        self._lagnavn = lagnavn
 
     @abstractmethod
-    def handle_question(self, question: Question):
+    def håndter_spørsmål(self, svar: Svar):
         """
         handle questions received from the quiz topic.
 
@@ -78,20 +59,7 @@ class QuizParticipant(ABC):
         """
         pass
 
-    @abstractmethod
-    def handle_assessment(self, assessment: Assessment):
-        """
-        handle assessments received from the quiz topic.
-
-        Parameters
-        ----------
-            assessment : Assessment
-                assessment of an answer by the quizmaster
-
-        """
-        pass
-
-    def publish_answer(self, question_id: str, category: str, answer: str):
+    def publiser_svar(self, spørsmål_id: str, kategorinavn: str, svar: str):
         """
         publishes an answer to a specific question id with a category
 
@@ -105,12 +73,12 @@ class QuizParticipant(ABC):
                 the answer to the question asked
 
         """
-        self.publish(Answer(question_id, category, self._team_name, answer))
+        self.publish(Svar(spørsmålId=spørsmål_id, kategorinavn=kategorinavn, lagnavn=self._lagnavn, svar=svar))
 
-    def publish(self, answer: Answer):
-        self._outbox.add(answer)
+    def publish(self, svar: Svar):
+        self._outbox.add(svar)
 
-    def messages(self) -> Set[Answer]:
+    def messages(self) -> Set[Svar]:
         out = self._outbox
         self._outbox = set()
         return out
@@ -120,7 +88,7 @@ class QuizRapid:
     """Mediates messages to and from the quiz rapid on behalf of the quiz participant"""
 
     def __init__(self,
-                 team_name: str,
+                 lagnavn: str,
                  topic: str,
                  bootstrap_servers: str,
                  consumer_group_id: str,
@@ -165,7 +133,7 @@ class QuizRapid:
             consumer.subscribe([topic])
         if producer is None:
             producer = Producer(producer_config(bootstrap_servers))
-        self._name = team_name
+        self._name = lagnavn
         self._producer: Producer = producer
         self._consumer: Consumer = consumer
         self._topic = topic
@@ -184,17 +152,12 @@ class QuizRapid:
         except JSONDecodeError as e:
             print(f"error: could not parse message: {msg.value()} error: {e}")
             return
-        if SchemaQuestion.is_valid(msg):
-            question = Question(msg["messageId"], msg["question"], msg["category"], msg["created"], msg["type"])
-            self._logg_question(question)
-            participant.handle_question(question)
-        if SchemaAssessment.is_valid(msg) and msg["teamName"] == self._name:
-            participant.handle_assessment(
-                Assessment(msg["messageId"], msg["category"], msg["teamName"], msg["questionId"],
-                           msg["answerId"], AssessmentStatus[msg["status"].upper()], msg["sign"], msg["created"],
-                           msg["type"]))
+        if SchemaSpørsmål.is_valid(msg):
+            spørsmål = Spørsmål(spørsmålId=msg["spørsmålId"], spørsmål=msg["spørsmål"], kategorinavn=msg["kategorinavn"], svarFormat=msg["svarFormat"])
+            self._logg_spørsmål(spørsmål)
+            participant.håndter_spørsmål(spørsmål)
         for message in participant.messages():
-            self._logg_answer(message)
+            self._logg_spørsmål(message)
             self._producer.produce(topic=self._topic, value=serialize(dataclasses.asdict(message)))
             self._producer.flush(timeout=0.1)
         if self._commit_offset:
@@ -208,22 +171,22 @@ class QuizRapid:
         self._producer.flush()
         self._consumer.close()
 
-    def _logg_question(self, question: Question):
-        if self._logg_questions and (self._log_ignore_list is None or question.category not in self._log_ignore_list):
-            question_dict = dataclasses.asdict(question)
+    def _logg_spørsmål(self, spørsmål: Spørsmål):
+        if self._logg_questions and (self._log_ignore_list is None or spørsmål.kategorinavn not in self._log_ignore_list):
+            question_dict = dataclasses.asdict(spørsmål)
             if self._short_log_line:
-                question_dict.pop("messageId")
+                question_dict.pop("spørsmålId")
                 question_dict.pop("type")
             print("\x1b[33;20m [{}][Q]\x1b[0m {}{}\x1b[0m"
                   .format(datetime.now().time().isoformat(), QUESTION_LOG_COLOR, json.dumps(question_dict), ))
 
-    def _logg_answer(self, answer: Answer):
-        if self._logg_answers and (self._log_ignore_list is None or answer.category not in self._log_ignore_list):
-            answer_dict = dataclasses.asdict(answer)
+    def _logg_svar(self, svar: Svar):
+        if self._logg_answers and (self._log_ignore_list is None or svar.kategorinavn not in self._log_ignore_list):
+            answer_dict = dataclasses.asdict(svar)
             if self._short_log_line:
-                answer_dict.pop("messageId")
+                answer_dict.pop("svarId")
                 answer_dict.pop("type")
-                answer_dict.pop("questionId")
-                answer_dict.pop("teamName")
+                answer_dict.pop("spørsmålId")
+                answer_dict.pop("lagnavn")
             print("\x1b[33;20m [{}][A]\x1b[0m {}{}\x1b[0m"
                   .format(datetime.now().time().isoformat(), ANSWER_LOG_COLOR, json.dumps(answer_dict)))
