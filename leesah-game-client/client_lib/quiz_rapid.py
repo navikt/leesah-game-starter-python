@@ -8,28 +8,16 @@ from json import JSONDecodeError
 from typing import Set
 
 from confluent_kafka import Consumer, Producer
-
-from .config import ENCODING
 from .kafka import consumer_config, producer_config
-from .schemas import (Svar as SchemaSvar, Spørsmål as SchemaSpørsmål)
 
 ANSWER_LOG_COLOR = "\u001b[34m"
 QUESTION_LOG_COLOR = "\u001b[32m"
 
-deserialize = lambda value: json.loads(value.decode(ENCODING))
-serialize = lambda value: json.dumps(value).encode(ENCODING)
-
-@dataclass
-class Spørsmål:
-    type: str = "SPØRSMÅL"
-    spørsmålId: str
-    spørsmål: str
-    kategorinavn: str
-    svarFormat: str
+deserialize = lambda value: json.loads(value.decode())
+serialize = lambda value: json.dumps(value, ensure_ascii=False).encode()
 
 @dataclass(eq=True, frozen=True)
 class Svar:
-    type: str = "SVAR"
     kategorinavn: str
     lagnavn: str
     svar: str
@@ -37,7 +25,13 @@ class Svar:
     svarId: str = str(uuid.uuid4())
     opprettet: str = datetime.now().isoformat()
 
-
+@dataclass
+class Spørsmål:
+    spørsmålId: str
+    spørsmål: str
+    kategorinavn: str
+    svarFormat: str
+    type: str = "SPØRSMÅL"
 
 
 class QuizParticipant(ABC):
@@ -47,7 +41,7 @@ class QuizParticipant(ABC):
         self._lagnavn = lagnavn
 
     @abstractmethod
-    def håndter_spørsmål(self, svar: Svar):
+    def håndter_spørsmål(self, spørsmål: Spørsmål):
         """
         handle questions received from the quiz topic.
 
@@ -152,13 +146,18 @@ class QuizRapid:
         except JSONDecodeError as e:
             print(f"error: could not parse message: {msg.value()} error: {e}")
             return
-        if SchemaSpørsmål.is_valid(msg):
-            spørsmål = Spørsmål(spørsmålId=msg["spørsmålId"], spørsmål=msg["spørsmål"], kategorinavn=msg["kategorinavn"], svarFormat=msg["svarFormat"])
+        if "@event_name" in msg and msg["@event_name"] == "SPØRSMÅL" and "spørsmål" in msg:
+            spørsmål = Spørsmål(spørsmålId=msg["spørsmålId"], spørsmål=msg["spørsmål"], kategorinavn=msg["kategorinavn"], svarFormat="")
             self._logg_spørsmål(spørsmål)
             participant.håndter_spørsmål(spørsmål)
         for message in participant.messages():
             self._logg_spørsmål(message)
-            self._producer.produce(topic=self._topic, value=serialize(dataclasses.asdict(message)))
+            data = dataclasses.asdict(message)
+            data.pop('opprettet')
+            data['@event_name'] = "SVAR"
+            data['@opprettet'] = datetime.now().isoformat()
+            value = serialize(data)
+            self._producer.produce(topic=self._topic, value=value)
             self._producer.flush(timeout=0.1)
         if self._commit_offset:
             self.commit_offset()
