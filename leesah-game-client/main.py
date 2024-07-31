@@ -12,10 +12,10 @@ from client_lib.config import HOSTED_KAFKA
 
 # Config ##########################################################################################################
 
-TEAM_NAME = "CHANGE ME"
-HEX_CODE = "CHANGE ME"
-QUIZ_TOPIC = "CHANGE ME"
-CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
+LAGNAVN = "<FYLL_MEG_UT>"
+HEX_CODE = "<FYLL_MEG_UT>"
+QUIZ_TOPIC = "<FYLL_MEG_UT>"
+CONSUMER_GROUP_ID = f"cg-leesah-team-${LAGNAVN}-1"
 
 
 # ##################################################################################################################
@@ -23,25 +23,21 @@ CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 
 class MyParticipant(quiz_rapid.QuizParticipant):
     def __init__(self):
-        super().__init__(TEAM_NAME)
+        super().__init__(LAGNAVN)
 
-    def handle_question(self, question: quiz_rapid.Question):
-        if question.category == "team-registration":
-            self.handle_register_team(question)
-
-    def handle_assessment(self, assessment: quiz_rapid.Assessment):
-        pass
+    def håndter_spørsmål(self, spørsmål: quiz_rapid.Spørsmål):
+        if spørsmål.kategorinavn == "team-registration":
+            self.håndter_team_registration(spørsmål)
 
     # ---------------------------------------------------------------------------- Question handlers
 
-    def handle_register_team(self, question: quiz_rapid.Question):
-        # Add code here to solve the first question! Hint: Check Readme 😎
-        
-
+    def håndter_team_registration(self, spørsmål: quiz_rapid.Spørsmål):
+        raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
+        #self.publiser_svar(spørsmål_id=spørsmål.spørsmålId, kategorinavn=spørsmål.kategorinavn, svar=HEX_CODE)
 
 def main():
     rapid = quiz_rapid.QuizRapid(
-        team_name=TEAM_NAME,
+        lagnavn=LAGNAVN,
         topic=QUIZ_TOPIC,
         bootstrap_servers=HOSTED_KAFKA,
         consumer_group_id=str(uuid.uuid4()),
