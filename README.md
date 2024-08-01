@@ -1,6 +1,6 @@
 # LEESAH Quiz Client
 
-**System overview**
+<!-- **System overview**
 ```bash
 ┌──────────────┐       ┌──────────────┐
 │              │       │              │
@@ -26,7 +26,7 @@
 │              │                 │              │
 │              │                 │              │
 └──────────────┘                 └──────────────┘
-````
+```` -->
 ### Prerequirements
   - Python ^3.10 🐍
   - IDEA of your choice (VS Code/IntelliJ/Atom ...etc) 💻
@@ -53,14 +53,14 @@ We recommend to use a virtual environment to install the dependencies. Set one u
 
 **For macOS/Linux**
 ```bash
-cd leesah-game-starter
+cd leesah-game-client
 python3 -m venv venv
 source ./venv/bin/activate
 ```
 
 **For Windows**
 ```bash
-cd leesah-game-starter
+cd leesah-game-client
 python3 -m venv venv
 .\venv\Scripts\activate
 ```
@@ -80,24 +80,24 @@ python3 -m pip install -r requirements.txt
 
 The result should look like this:
 ```bash
-leesah-game-starter
+leesah-game-client
 ├── certs
 │   ├── .gitignore
-│   ├── leesah-creds.yaml
+│   ├── student-certs.yaml
 ```
 
 ### 5. Change the application config in main.py
 
-- Set `TEAM_NAME` to your preferred team name 😼 NB! Do not change this during the course!!
+- Set `LAGNAVN` to your preferred team name 😼 NB! Do not change this during the course!!
 - Set `HEX_CODE` to your preferred team color
 - Set `QUIZ_TOPIC` to the topic name provided by the course administrators
 
 ```python
 # Config ##########
 
-TEAM_NAME = "CHANGE ME"
-HEX_CODE = "CHANGE ME"
-QUIZ_TOPIC = "CHANGE ME"
+LAGNAVN = "<FYLL_MEG_UT>"
+HEX_CODE = "<FYLL_MEG_UT>"
+QUIZ_TOPIC = "<FYLL_MEG_UT>"
 CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 ```
 
@@ -106,12 +106,12 @@ CONSUMER_GROUP_ID = f"cg-leesah-team-${TEAM_NAME}-1"
 Below you can see example code of how to solve the first question.
 
 ```python
-     def handle_register_team(self, question: quiz_rapid.Question):
-         self.publish_answer(
-             question_id=question.messageId,
-             category=question.category,
-             answer=HEX_CODE
-         )
+     def håndter_team_registration(self, spørsmål: quiz_rapid.Spørsmål):
+        self.publiser_svar(
+            spørsmål_id=spørsmål.spørsmålId, 
+            kategorinavn=spørsmål.kategorinavn, 
+            svar=HEX_CODE
+        )
 ```
 
 Paste it in the correct place in the main.py-file!
@@ -140,7 +140,7 @@ The main loop creates a `QuizRapid` object that runs your `QuizParticipant`.
 
 ```python
 def main():
-    rapid = quiz_rapid.QuizRapid(TEAM_NAME, QUIZ_TOPIC, HOSTED_KAFKA, CONSUMER_GROUP_ID, False)
+    rapid = quiz_rapid.QuizRapid(LAGNAVN, QUIZ_TOPIC, HOSTED_KAFKA, CONSUMER_GROUP_ID, False)
 
     try:
         while True:
@@ -156,8 +156,7 @@ can extend to get started solving the questions.
 
 There are two methods you need to implement in your own class: 
 
-- `handle_question(self, question: quiz_rapid.Question)` is the most important method, it is where you will receive questions to answer.
-- (optional) `handle_assessment(self, assessment: Assessment):` Allows you to read assessments the QuizMaster make of your answers.
+- `håndter_spørsmål(self, spørsmål: quiz_rapid.Spørsmål)` is the most important method, it is where you will receive questions to answer.
 
 
 ## Tips and Tricks 💡

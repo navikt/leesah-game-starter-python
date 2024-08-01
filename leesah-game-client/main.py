@@ -32,8 +32,7 @@ class MyParticipant(quiz_rapid.QuizParticipant):
     # ---------------------------------------------------------------------------- Question handlers
 
     def håndter_team_registration(self, spørsmål: quiz_rapid.Spørsmål):
-        raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
-        #self.publiser_svar(spørsmål_id=spørsmål.spørsmålId, kategorinavn=spørsmål.kategorinavn, svar=HEX_CODE)
+        # Se i readm'en for å få et forslag på hvordan dette kan håndteres 🤠
 
 def main():
     rapid = quiz_rapid.QuizRapid(
