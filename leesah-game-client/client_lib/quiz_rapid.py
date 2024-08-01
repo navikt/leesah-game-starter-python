@@ -146,8 +146,13 @@ class QuizRapid:
         except JSONDecodeError as e:
             print(f"error: could not parse message: {msg.value()} error: {e}")
             return
+        except UnicodeDecodeError as e:
+            print(f"error: could not parse message: {msg.value()} error: {e}")
+            return
         if "@event_name" in msg and msg["@event_name"] == "SPØRSMÅL" and "spørsmål" in msg:
-            spørsmål = Spørsmål(spørsmålId=msg["spørsmålId"], spørsmål=msg["spørsmål"], kategorinavn=msg["kategorinavn"], svarFormat="")
+            formatSvar = ""
+            if "svarFormat" in msg: formatSvar = msg["svarFormat"] 
+            spørsmål = Spørsmål(spørsmålId=msg["spørsmålId"], spørsmål=msg["spørsmål"], kategorinavn=msg["kategorinavn"], svarFormat=formatSvar)
             self._logg_spørsmål(spørsmål)
             participant.håndter_spørsmål(spørsmål)
         for message in participant.messages():
