@@ -177,7 +177,7 @@ class QuizRapid:
                 question_dict.pop("spørsmålId")
                 question_dict.pop("type")
             print("\x1b[33;20m [{}][Q]\x1b[0m {}{}\x1b[0m"
-                  .format(datetime.now().time().isoformat(), QUESTION_LOG_COLOR, json.dumps(question_dict), ))
+                  .format(datetime.now().time().isoformat(), QUESTION_LOG_COLOR, json.dumps(question_dict, ensure_ascii=False), ))
 
     def _logg_svar(self, svar: Svar):
         if self._logg_answers and (self._log_ignore_list is None or svar.kategorinavn not in self._log_ignore_list):
@@ -188,4 +188,4 @@ class QuizRapid:
                 answer_dict.pop("spørsmålId")
                 answer_dict.pop("lagnavn")
             print("\x1b[33;20m [{}][A]\x1b[0m {}{}\x1b[0m"
-                  .format(datetime.now().time().isoformat(), ANSWER_LOG_COLOR, json.dumps(answer_dict)))
+                  .format(datetime.now().time().isoformat(), ANSWER_LOG_COLOR, json.dumps(answer_dict, ensure_ascii=False)))
